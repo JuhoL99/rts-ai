@@ -21,7 +21,7 @@ public class GameMap : MonoBehaviour
         {
             for(int j = 0; j < mapHeight; j++)
             {
-                gameMap[i, j] = new MapSquare(0, new Vector2(i, j));
+                gameMap[i, j] = new MapSquare(0, new Vector2(i, j), new Vector2(4,4), Vector2.Distance(new Vector2(i, j), new Vector2(4, 4)));
                 Instantiate(mapSquare, gameMap[i, j].transformLoc, Quaternion.identity);
             }
         }
@@ -41,10 +41,14 @@ public class MapSquare
 {
     public float weight;
     public Vector2 transformLoc;
+    [SerializeField] private Vector2 goal;
+    [SerializeField] private float hCost;
 
-    public MapSquare(float weight, Vector2 transformLoc)
+    public MapSquare(float weight, Vector2 transformLoc, Vector2 goal, float hCost)
     {
         this.weight = weight;
         this.transformLoc = transformLoc;
+        this.goal = goal;
+        this.hCost = hCost;
     }
 }
