@@ -5,10 +5,12 @@ using UnityEngine;
 public class TestDebugScript : MonoBehaviour
 {
     public GameObject debugTile;
-    Grid grid;
+    Grid<int> grid;
     void Start()
     {
-        grid = new Grid(9,9,1,new Vector3(3,2,0), debugTile);
+        grid = new Grid<int>(9,9,1,new Vector3(10,10,0), debugTile);
+        Grid<int> grid2 = new Grid<int>(2, 3, 2, new Vector3(0, 0, 0), debugTile);
+        Grid<bool> grid3 = new Grid<bool>(3, 3, 2, new Vector3(4, 4, 0), debugTile);
     }
     private void Update()
     {

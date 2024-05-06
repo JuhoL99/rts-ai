@@ -5,12 +5,12 @@ using Unity.VisualScripting;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
-public class Grid
+public class Grid<TGrid> //generic datatype, can use other than int
 {
     private int width;
     private int height;
     private int cellSize;
-    private int[,] gridArray;
+    private TGrid[,] gridArray;
     private Vector3 origin;
 
 
@@ -26,20 +26,21 @@ public class Grid
         this.height = height;
         this.cellSize = cellSize;
         this.origin = origin;
-        this.gridArray = new int[width, height];
+        this.gridArray = new TGrid[width, height];
         
         this.debugTiles = new GameObject[width, height];
 
 
 
         Debug.Log(width + " " + height);
+
+        // Instantiate a tile to each gridArray coordinate
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 debugTiles[x, y] = Object.Instantiate(debugTile, GetWorldPosition(x, y), Quaternion.identity);
-                debugTiles[x, y].GetComponent<TestTile>().setText(0);
-                //GameObject tile = Object.Instantiate(debugTile, GetWorldPosition(x,y), Quaternion.identity);
+                debugTiles[x, y].transform.localScale = Vector3.one * cellSize;
             }
         }
     }
@@ -54,17 +55,18 @@ public class Grid
         return new Vector2Int(Mathf.FloorToInt((worldPos-origin).x/cellSize), Mathf.FloorToInt((worldPos-origin).y/cellSize));
     }
     // Set weight of a grid cell
-    public void SetWeight(int x, int y, int weight)
+    public void SetWeight(int x, int y, TGrid weight)
     {
         if(x >= 0 && y >= 0 && x < width && y < height)
         {
             gridArray[x, y] = weight;
 
-            debugTiles[x, y].GetComponent<TestTile>().setText(weight);
+            var text = weight.ToString();
+            debugTiles[x, y].GetComponent<TestTile>().setText(text);
         }
     }
     // Set weight of a grid cell in the world position
-    public void SetWeight(Vector3 worldPos, int weight)
+    public void SetWeight(Vector3 worldPos, TGrid weight)
     {
         Vector2Int xy = GetXY(worldPos);
         int x = xy.x;
@@ -73,16 +75,16 @@ public class Grid
 
     }
     // Get weight of a grid cel
-    public int GetWeight(int x, int y)
+    public TGrid GetWeight(int x, int y)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
             return gridArray[x, y];
         }
-        else { return 0; }
+        else { return default(TGrid); }
     }
     // Get weight of a grid cell in the world position
-    public int GetWeight(Vector3 worldPos)
+    public TGrid GetWeight(Vector3 worldPos)
     {
         Vector2Int xy = GetXY((Vector3)worldPos);
         return GetWeight(xy.x, xy.y);
