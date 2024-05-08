@@ -7,7 +7,7 @@ public class TestTile : MonoBehaviour
 {
     TMP_Text text;
     private Grid<int> grid;
-    void Start()
+    void Awake()
     {
         text = GetComponentInChildren<TMP_Text>();
     }

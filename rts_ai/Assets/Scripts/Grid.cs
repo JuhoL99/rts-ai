@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
-using UnityEditor.ShaderGraph.Internal;
+using System;
 using UnityEngine;
 
 public class Grid<TGrid> //generic datatype, can use other than int
@@ -13,36 +9,49 @@ public class Grid<TGrid> //generic datatype, can use other than int
     private TGrid[,] gridArray;
     private Vector3 origin;
 
+    public event EventHandler<OnGridValueChangedEventArgs> OnGridValueChanged;
+    public class OnGridValueChangedEventArgs : EventArgs
+    {
+        public int x;
+        public int y;
+    }
+
 
     private GameObject debugTile;
     private GameObject[,] debugTiles;
 
     // Grid constructor, takes in map size and size of one map cell
-    public Grid(int width, int height, int cellSize, Vector3 origin, GameObject debugTile)
+    public Grid(int width, int height, int cellSize, Vector3 origin, Func<Grid<TGrid>,int,int,TGrid> createGridElement)
     {
-        this.debugTile = debugTile;
-
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
         this.origin = origin;
         this.gridArray = new TGrid[width, height];
-        
-        this.debugTiles = new GameObject[width, height];
 
-
-
-        Debug.Log(width + " " + height);
+        Debug.Log("created a grid: " + width + " " + height);
 
         // Instantiate a tile to each gridArray coordinate
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                debugTiles[x, y] = Object.Instantiate(debugTile, GetWorldPosition(x, y), Quaternion.identity);
-                debugTiles[x, y].transform.localScale = Vector3.one * cellSize;
+                gridArray[x, y] = createGridElement(this, x, y);
             }
         }
+
+        bool debugMode = false;
+        if(debugMode)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                for(int y = 0; y < height;y++)
+                {
+                    Debug.Log($"({x},{y})");
+                }
+            }
+        }
+
     }
     // Get position of a cell in the world coordinates
     private Vector3 GetWorldPosition(int x, int y)
@@ -50,32 +59,35 @@ public class Grid<TGrid> //generic datatype, can use other than int
         return new Vector3(x, y, 0) * cellSize + origin;
     }
     // Get x and y of a cell in the grid coordinates
-    private Vector2Int GetXY(Vector3 worldPos)
+    public Vector2Int GetXY(Vector3 worldPos)
     {
         return new Vector2Int(Mathf.FloorToInt((worldPos-origin).x/cellSize), Mathf.FloorToInt((worldPos-origin).y/cellSize));
     }
     // Set weight of a grid cell
-    public void SetWeight(int x, int y, TGrid weight)
+    public void SetGridElement(int x, int y, TGrid value)
     {
         if(x >= 0 && y >= 0 && x < width && y < height)
         {
-            gridArray[x, y] = weight;
+            gridArray[x, y] = value;
+            if (OnGridValueChanged != null) OnGridValueChanged(this, new OnGridValueChangedEventArgs { x = x, y = y });
 
-            var text = weight.ToString();
-            debugTiles[x, y].GetComponent<TestTile>().setText(text);
         }
     }
     // Set weight of a grid cell in the world position
-    public void SetWeight(Vector3 worldPos, TGrid weight)
+    public void SetGridElement(Vector3 worldPos, TGrid value)
     {
         Vector2Int xy = GetXY(worldPos);
         int x = xy.x;
         int y = xy.y;
-        SetWeight(x, y, weight);
+        SetGridElement(x, y, value);
 
     }
+    public void TriggerGridObjectChanged(int x, int y)
+    {
+        if (OnGridValueChanged != null) OnGridValueChanged(this, new OnGridValueChangedEventArgs { x = x, y = y });
+    }
     // Get weight of a grid cel
-    public TGrid GetWeight(int x, int y)
+    public TGrid GetGridElement(int x, int y)
     {
         if (x >= 0 && y >= 0 && x < width && y < height)
         {
@@ -84,9 +96,11 @@ public class Grid<TGrid> //generic datatype, can use other than int
         else { return default(TGrid); }
     }
     // Get weight of a grid cell in the world position
-    public TGrid GetWeight(Vector3 worldPos)
+    public TGrid GetGridElement(Vector3 worldPos)
     {
         Vector2Int xy = GetXY((Vector3)worldPos);
-        return GetWeight(xy.x, xy.y);
+        return GetGridElement(xy.x, xy.y);
     }
+    public int GetWidth() { return width; }
+    public int GetHeight() { return height; }
 }
