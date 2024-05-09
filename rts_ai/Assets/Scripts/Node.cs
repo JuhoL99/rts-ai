@@ -12,6 +12,7 @@ public class Node
     public int gCost;
     public int hCost;
     public int fCost;
+    public int moveCost;
 
     public bool isWall;
     public bool isTurret;
@@ -22,6 +23,7 @@ public class Node
         this.x = x;
         this.y = y;
         isWall = false;
+        moveCost = 1;
     }
     public void CalculateFCost()
     {

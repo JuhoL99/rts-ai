@@ -6,24 +6,32 @@ using UnityEngine;
 public class Testing : MonoBehaviour
 {
     // Start is called before the first frame update
-    Grid<Node> grid;
+    public Grid<Node> grid;
     [SerializeField] private GameObject tile;
     [SerializeField] private GameObject wall;
-    Pathfinding pathfinding;
+    public Pathfinding pathfinding;
     List<GameObject> tiles;
+
+    [SerializeField] private GameObject enemy;
+    private EnemyMovement enemyScript;
     void Start()
     {
         tiles = new List<GameObject>();
-        pathfinding = new Pathfinding(10,10);
+        pathfinding = new Pathfinding(20,10);
         grid = pathfinding.GetPathGrid();
+        enemyScript = enemy.GetComponent<EnemyMovement>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
-        bool live = true;
-        if(Input.GetMouseButtonDown(1) || live)
+        if(Input.GetMouseButtonDown(0))
+        {
+            enemyScript.SetTargetPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+        }
+        /*Debug.Log((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+        bool live = !true;
+        if(Input.GetMouseButtonDown(0) || live)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 coord = pathfinding.GetPathGrid().GetXY(mousePos);
@@ -48,8 +56,9 @@ public class Testing : MonoBehaviour
                     Debug.DrawLine(new Vector3(path[i].x, path[i].y) * 1f + Vector3.one * 0.5f, new Vector3(path[i + 1].x, path[i + 1].y),Color.red);
                 }
             }
-        }
-        if(Input.GetMouseButtonDown(0))
+        }*/
+        return;
+        if(Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 coord = pathfinding.GetPathGrid().GetXY(mousePos);
