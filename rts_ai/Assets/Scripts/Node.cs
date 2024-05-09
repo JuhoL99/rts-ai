@@ -13,11 +13,15 @@ public class Node
     public int hCost;
     public int fCost;
 
+    public bool isWall;
+    public bool isTurret;
+
     public Node(Grid<Node> grid, int x, int y)
     {
         this.grid = grid;
         this.x = x;
         this.y = y;
+        isWall = false;
     }
     public void CalculateFCost()
     {

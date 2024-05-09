@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class Pathfinding
 {
+    public static Pathfinding instance { get; private set; }
+
     private const int MOVE_DIAGONAL = 14;
     private const int MOVE_STRAIGHT = 10;
 
@@ -45,6 +47,7 @@ public class Pathfinding
             {
                 return CalculatePath(endNode);
             }
+
             que.Remove(current);
             visited.Add(current);
 
@@ -52,6 +55,11 @@ public class Pathfinding
             {
                 if(visited.Contains(neighbour))
                 {
+                    continue;
+                }
+                if(neighbour.isWall)
+                {
+                    visited.Add(neighbour);
                     continue;
                 }
                 int tentativeGScore = current.gCost + DistanceCost(current, neighbour);
@@ -108,7 +116,7 @@ public class Pathfinding
             {
                 neighbourList.Add(GetNode(current.x + 1, current.y-1)); // right down
             }
-            if(current.y + 1<grid.GetHeight())
+            if(current.y + 1< grid.GetHeight())
             {
                 neighbourList.Add(GetNode(current.x+1, current.y+1)); // right up
             }
@@ -117,17 +125,18 @@ public class Pathfinding
         {
             neighbourList.Add(GetNode(current.x,current.y-1)); // down
         }
-        if(current.y + 1 <grid.GetHeight())
+        if(current.y + 1 < grid.GetHeight())
         {
             neighbourList.Add(GetNode(current.x, current.y+1)); // up
         }
+
         return neighbourList;
     }
     private int DistanceCost(Node a, Node b)
     {
         int xDistance = (int)Mathf.Abs(a.getXY().x - b.getXY().x);
         int yDistance = (int)Mathf.Abs(a.getXY().y - b.getXY().y);
-        int remaining = xDistance - yDistance;
+        int remaining = (int)Mathf.Abs(xDistance - yDistance);  //was int remaining = xDistance - yDistance; fixed now!
         return MOVE_DIAGONAL * Mathf.Min(xDistance, yDistance) + MOVE_STRAIGHT * remaining;
     }
     private Node GetLowestFCostNode(List<Node> nodes)

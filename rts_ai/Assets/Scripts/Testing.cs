@@ -8,6 +8,7 @@ public class Testing : MonoBehaviour
     // Start is called before the first frame update
     Grid<Node> grid;
     [SerializeField] private GameObject tile;
+    [SerializeField] private GameObject wall;
     Pathfinding pathfinding;
     List<GameObject> tiles;
     void Start()
@@ -50,7 +51,13 @@ public class Testing : MonoBehaviour
         }
         if(Input.GetMouseButtonDown(0))
         {
-            //Debug.Log(grid.GetGridElement(Camera.main.ScreenToWorldPoint(Input.mousePosition))?.getXY());
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 coord = pathfinding.GetPathGrid().GetXY(mousePos);
+            Node node = grid.GetGridElement(coord);
+            node.isWall = true;
+            Instantiate(wall,new Vector3(coord.x,coord.y,0), Quaternion.identity);
+            
+            /*Debug.Log(grid.GetGridElement(Camera.main.ScreenToWorldPoint(Input.mousePosition))?.getXY());
             {
                 for (int x = 0; x < 10; x++)
                 {
@@ -62,7 +69,7 @@ public class Testing : MonoBehaviour
                         tileObj.GetComponent<TestTile>().setText($"{coord.x},{coord.y}");
                     }
                 }
-            }
+            }*/
         }
         
     }
