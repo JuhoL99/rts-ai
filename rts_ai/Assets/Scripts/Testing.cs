@@ -56,8 +56,7 @@ public class Testing : MonoBehaviour
                     Debug.DrawLine(new Vector3(path[i].x, path[i].y) * 1f + Vector3.one * 0.5f, new Vector3(path[i + 1].x, path[i + 1].y),Color.red);
                 }
             }
-        }*/
-        return;
+        }
         if(Input.GetMouseButtonDown(1))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -78,8 +77,8 @@ public class Testing : MonoBehaviour
                         tileObj.GetComponent<TestTile>().setText($"{coord.x},{coord.y}");
                     }
                 }
-            }*/
-        }
-        
+            }
+        }*/
+
     }
 }

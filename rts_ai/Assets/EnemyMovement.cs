@@ -8,7 +8,7 @@ using UnityEngine;
 public class EnemyMovement : MonoBehaviour
 {
 
-    private Vector3 targetPosition;
+    public Vector3 targetPosition;
     private Vector3 currentGoal;
         
     private float moveSpeed = 2f;
@@ -17,17 +17,18 @@ public class EnemyMovement : MonoBehaviour
     private List<Vector3> pathCoordinates;
 
     BuildManager buildManager;
+    bool spawned = false;
 
 
     void Start()
     {
-        pathCoordinates = new List<Vector3>();
         buildManager = BuildManager.instance;
         buildManager.OnConstruction += RecalculatePathOnBuild;
     }
     void Update()
     {
-        Movement();
+        if(spawned)
+            Movement();
     }
     private Vector3 GetCurrentPosition()
     {
@@ -35,7 +36,7 @@ public class EnemyMovement : MonoBehaviour
     }
     private void Movement()
     {
-        if(pathCoordinates != null && pathIndex < pathCoordinates.Count)
+        if (pathCoordinates != null && pathIndex < pathCoordinates.Count)
         {
             targetPosition = pathCoordinates[pathIndex];
             if(Vector3.Distance(GetCurrentPosition(), targetPosition) > .05f)
@@ -58,6 +59,7 @@ public class EnemyMovement : MonoBehaviour
     }
     private void RecalculatePathOnBuild(object sender, EventArgs e)
     {
+        Debug.Log("this shouldnt run");
         if (pathCoordinates != null && pathCoordinates.Count > 0)
         {
             StopMovement();
@@ -67,10 +69,12 @@ public class EnemyMovement : MonoBehaviour
     }
     public void SetTargetPosition(Vector3 targetPosition)
     {
+        spawned = true;
+        pathCoordinates = new List<Vector3>();
         pathIndex = 0;
         currentGoal = targetPosition;
         pathCoordinates = Pathfinding.instance.FindPath(GetCurrentPosition(), targetPosition);
-        if(pathCoordinates != null && pathCoordinates.Count > 1)
+        if (pathCoordinates != null && pathCoordinates.Count > 1)
         {
             pathCoordinates.RemoveAt(0);
         }
