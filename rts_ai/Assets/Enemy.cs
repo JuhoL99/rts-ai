@@ -5,7 +5,7 @@ using System.Net;
 using Unity.Properties;
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
 
     public Vector3 targetPosition;
@@ -17,9 +17,12 @@ public class EnemyMovement : MonoBehaviour
     private List<Vector3> pathCoordinates;
 
     BuildManager buildManager;
-    bool spawned = false;
+    public event EventHandler OnReachedGoal;
 
-
+    private void Awake()
+    {
+        pathCoordinates = new List<Vector3>();
+    }
     void Start()
     {
         buildManager = BuildManager.instance;
@@ -27,8 +30,11 @@ public class EnemyMovement : MonoBehaviour
     }
     void Update()
     {
-        if(spawned)
-            Movement();
+        Movement();
+    }
+    public void Test()
+    {
+        Debug.Log("hit success");
     }
     private Vector3 GetCurrentPosition()
     {
@@ -48,6 +54,8 @@ public class EnemyMovement : MonoBehaviour
                 pathIndex++;
                 if(pathIndex >= pathCoordinates.Count)
                 {
+                    if (OnReachedGoal != null)
+                        OnReachedGoal(this, EventArgs.Empty);
                     StopMovement();
                 }
             }
@@ -59,7 +67,6 @@ public class EnemyMovement : MonoBehaviour
     }
     private void RecalculatePathOnBuild(object sender, EventArgs e)
     {
-        Debug.Log("this shouldnt run");
         if (pathCoordinates != null && pathCoordinates.Count > 0)
         {
             StopMovement();
@@ -69,13 +76,12 @@ public class EnemyMovement : MonoBehaviour
     }
     public void SetTargetPosition(Vector3 targetPosition)
     {
-        spawned = true;
-        pathCoordinates = new List<Vector3>();
         pathIndex = 0;
         currentGoal = targetPosition;
         pathCoordinates = Pathfinding.instance.FindPath(GetCurrentPosition(), targetPosition);
         if (pathCoordinates != null && pathCoordinates.Count > 1)
         {
+            // Remove the first coordinate which is enemy location
             pathCoordinates.RemoveAt(0);
         }
     }

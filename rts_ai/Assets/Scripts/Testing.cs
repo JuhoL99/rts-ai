@@ -11,15 +11,24 @@ public class Testing : MonoBehaviour
     [SerializeField] private GameObject wall;
     public Pathfinding pathfinding;
     List<GameObject> tiles;
+    private int width = 20;
+    private int height = 10;
 
     [SerializeField] private GameObject enemy;
-    private EnemyMovement enemyScript;
+    private Enemy enemyScript;
     void Start()
     {
         tiles = new List<GameObject>();
-        pathfinding = new Pathfinding(20,10);
+        pathfinding = new Pathfinding(width,height);
         grid = pathfinding.GetPathGrid();
-        enemyScript = enemy.GetComponent<EnemyMovement>();
+        enemyScript = enemy.GetComponent<Enemy>();
+        for(int x = 0; x < width; x++)
+        {
+            for(int y = 0; y < height; y++)
+            {
+                Instantiate(tile, grid.GetWorldPosition(x, y),Quaternion.identity);
+            }
+        }
     }
 
     // Update is called once per frame

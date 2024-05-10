@@ -9,9 +9,9 @@ public class BuildManager : MonoBehaviour
     public static BuildManager instance;
     [SerializeField] private GameObject wall;
     [SerializeField] private Testing testing;
-    void Start()
+    private void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
         }
@@ -19,6 +19,10 @@ public class BuildManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+    void Start()
+    {
+        
     }
 
     void Update()
