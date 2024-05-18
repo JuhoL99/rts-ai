@@ -9,7 +9,7 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private Vector3 targetPosition;
     public List<Enemy> enemyList;
-    public event EventHandler OnSomeoneReachedGoal;
+    public event EventHandler<EnemyEventArgs> OnEnemyEvent;
 
     private void Awake()
     {
@@ -22,6 +22,7 @@ public class WaveSpawner : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     void Start()
     {
         targetPosition = new Vector3(19, 9, 0);
@@ -32,28 +33,48 @@ public class WaveSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            GameObject go = Instantiate(enemyPrefab, transform.position + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            GameObject go = Instantiate(enemyPrefab, transform.position + new Vector3(0.5f, 4.5f, 0), Quaternion.identity);
             Enemy enemy = go.GetComponent<Enemy>();
             enemy.SetTargetPosition(targetPosition);
-            enemy.OnReachedGoal += RemoveEnemyFromList;
+            enemy.OnEnemyEvent += HandleEnemyEvent;
             enemyList.Add(enemy);
         }
-        if(enemyList.Count == 0)
+        if (enemyList.Count == 0)
         {
-            //Debug.Log("wave finished");
+            // Debug.Log("wave finished");
         }
     }
 
-    // Event handler method to remove the enemy from the list
-    private void RemoveEnemyFromList(object sender, System.EventArgs e)
+    private void HandleEnemyEvent(object sender, EnemyEventArgs e)
     {
-        Enemy enemyToRemove = sender as Enemy;
-        if (enemyToRemove != null)
+        Enemy enemy = sender as Enemy;
+        if (enemy != null)
         {
-            Debug.Log("removed itself");
-            enemyList.Remove(enemyToRemove);
-            Destroy(enemyToRemove.gameObject);
-            OnSomeoneReachedGoal(this, EventArgs.Empty);
+            if (e.EventType == EnemyEventType.ReachedGoal)
+            {
+                Debug.Log("Enemy reached goal.");
+                OnEnemyEvent?.Invoke(this, e);
+            }
+            else if (e.EventType == EnemyEventType.Died)
+            {
+                Debug.Log("Enemy died.");
+            }
+            enemyList.Remove(enemy);
+            Destroy(enemy.gameObject);
         }
+    }
+}
+public enum EnemyEventType
+{
+    ReachedGoal,
+    Died
+}
+public class EnemyEventArgs : EventArgs
+{
+    public EnemyEventType EventType { get; private set; }
+
+    public EnemyEventArgs(EnemyEventType eventType)
+    {
+        EventType = eventType;
     }
 }

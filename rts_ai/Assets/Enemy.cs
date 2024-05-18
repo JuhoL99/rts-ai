@@ -17,7 +17,13 @@ public class Enemy : MonoBehaviour
     private List<Vector3> pathCoordinates;
 
     BuildManager buildManager;
-    public event EventHandler OnReachedGoal;
+    public event EventHandler<EnemyEventArgs> OnEnemyEvent;
+    //public event EventHandler OnReachedGoal;
+    //public event EventHandler OnEnemyDied;
+
+    //[Header("Health")]
+    private int maxHealth = 10;
+    private int currentHealth;
 
     private void Awake()
     {
@@ -27,14 +33,11 @@ public class Enemy : MonoBehaviour
     {
         buildManager = BuildManager.instance;
         buildManager.OnConstruction += RecalculatePathOnBuild;
+        currentHealth = maxHealth;
     }
     void Update()
     {
         Movement();
-    }
-    public void Test()
-    {
-        Debug.Log("hit success");
     }
     private Vector3 GetCurrentPosition()
     {
@@ -54,8 +57,8 @@ public class Enemy : MonoBehaviour
                 pathIndex++;
                 if(pathIndex >= pathCoordinates.Count)
                 {
-                    if (OnReachedGoal != null)
-                        OnReachedGoal(this, EventArgs.Empty);
+                    if (OnEnemyEvent != null)
+                        OnEnemyEvent(this, new EnemyEventArgs(EnemyEventType.ReachedGoal));
                     StopMovement();
                 }
             }
@@ -84,5 +87,19 @@ public class Enemy : MonoBehaviour
             // Remove the first coordinate which is enemy location
             pathCoordinates.RemoveAt(0);
         }
+    }
+    public void TakeDamage(int damageAmount)
+    {
+        currentHealth -= damageAmount;
+        if(currentHealth <= 0)
+        {
+            DeathSequence();
+        }
+    }
+    private void DeathSequence()
+    {
+
+        if (OnEnemyEvent != null)
+            OnEnemyEvent(this, new EnemyEventArgs(EnemyEventType.Died));
     }
 }

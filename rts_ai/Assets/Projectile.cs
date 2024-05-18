@@ -7,10 +7,7 @@ public class Projectile : MonoBehaviour
 {
     private Transform target;
     private float projectileSpeed = 50f;
-    void Start()
-    {
-        
-    }
+    private int damageAmount = 1;
     void Update()
     {
         if (target == null)
@@ -21,9 +18,8 @@ public class Projectile : MonoBehaviour
         float distanceToTarget = ((Vector2)target.transform.position - (Vector2)transform.position).magnitude;
         if (distanceToTarget < 0.1f)
         {
-            Debug.Log("reached here");
             Enemy enemy = target.gameObject.GetComponent<Enemy>();
-            enemy.Test();
+            enemy.TakeDamage(damageAmount);
             Destroy(gameObject);
         }
     }

@@ -11,7 +11,8 @@ public class HealthManager : MonoBehaviour
     void Start()
     {
         enemyManager = WaveSpawner.instance;
-        enemyManager.OnSomeoneReachedGoal += EnemyReachedGoal;
+        enemyManager.OnEnemyEvent += HandleEnemyEvent;
+        //enemyManager.OnSomeoneReachedGoal += EnemyReachedGoal;
         currentHealth = maxHealth;
         Debug.Log(currentHealth);
 
@@ -20,9 +21,13 @@ public class HealthManager : MonoBehaviour
     {
         
     }
-    private void EnemyReachedGoal(object sender, EventArgs e)
+    private void HandleEnemyEvent(object sender, EnemyEventArgs e)
     {
-        currentHealth -= 5;
-        Debug.Log(currentHealth);
+        if (e.EventType == EnemyEventType.ReachedGoal)
+        {
+            // Decrease health when an enemy reaches its goal
+            currentHealth -= 5;
+            Debug.Log("Health decreased by 5. Current health: " + currentHealth);
+        }
     }
 }

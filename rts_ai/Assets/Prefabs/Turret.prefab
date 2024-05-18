@@ -134,7 +134,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   projectileSpawnPos: {fileID: 3665868836557078865}
-  projectile: {fileID: 0}
+  projectile: {fileID: 6362437603898925696, guid: 12670d61819c8c748b119ac1da6b4cf5, type: 3}
 --- !u!1 &9184590114369661341
 GameObject:
   m_ObjectHideFlags: 0

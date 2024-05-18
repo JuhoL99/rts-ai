@@ -58,6 +58,13 @@ public class Grid<TGrid>
         }
 
     }
+    public int MaxSize
+    {
+        get
+        {
+            return width * height;
+        }
+    }
     // Method to get world position of a cell in coordinates
     public Vector3 GetWorldPosition(int x, int y)
     {

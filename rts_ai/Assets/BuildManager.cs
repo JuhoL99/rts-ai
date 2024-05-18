@@ -5,10 +5,15 @@ using UnityEngine;
 
 public class BuildManager : MonoBehaviour
 {
+    
     public event EventHandler OnConstruction;
     public static BuildManager instance;
     [SerializeField] private GameObject wall;
     [SerializeField] private Testing testing;
+
+    [SerializeField] private GameObject[] buildings;
+    [SerializeField] private GameObject currentSelectedBuilding;
+
     private void Awake()
     {
         if (instance == null)
@@ -22,7 +27,7 @@ public class BuildManager : MonoBehaviour
     }
     void Start()
     {
-        
+        currentSelectedBuilding = buildings[0];
     }
 
     void Update()
@@ -36,7 +41,7 @@ public class BuildManager : MonoBehaviour
             if(!testing.pathfinding.IsPathBlockedByBuilding(new Vector2Int(0,0),new Vector2Int(19,9), node))
             {
                 node.isWall = true;
-                Instantiate(wall, new Vector3(coord.x, coord.y, 0), Quaternion.identity);
+                Instantiate(currentSelectedBuilding, new Vector3(coord.x, coord.y, 0), Quaternion.identity);
                 if (OnConstruction != null)
                 {
                     OnConstruction(this, EventArgs.Empty);
@@ -44,4 +49,9 @@ public class BuildManager : MonoBehaviour
             }
         }
     }
+    public void SetBuildingType(int bId)
+    {
+        currentSelectedBuilding = buildings[bId];
+    }
+
 }
