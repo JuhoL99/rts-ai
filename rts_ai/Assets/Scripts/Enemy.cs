@@ -44,7 +44,7 @@ public class Enemy : MonoBehaviour
         if (pathCoordinates != null && pathIndex < pathCoordinates.Count)
         {
             targetPosition = pathCoordinates[pathIndex];
-            if(Vector3.Distance(GetCurrentPosition(), targetPosition) > .05f)
+            if(Vector3.Distance(GetCurrentPosition(), targetPosition) > .00001f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
             }
