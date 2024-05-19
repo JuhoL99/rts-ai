@@ -2,20 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
-public class Testing : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public static GameManager instance{  get; private set; }
     public Grid<Node> grid;
     [SerializeField] private GameObject tile;
     [SerializeField] private GameObject wall;
     public Pathfinding pathfinding;
     List<GameObject> tiles;
-    private int width = 20;
-    private int height = 10;
+    private int width = 60;
+    private int height = 30;
 
     [SerializeField] private GameObject enemy;
     private Enemy enemyScript;
+    private void Awake()
+    {
+        instance = this;
+    }
     void Start()
     {
         tiles = new List<GameObject>();
@@ -36,7 +41,11 @@ public class Testing : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            enemyScript.SetTargetPosition(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            Vector3 tPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            if(grid.GetGridElement(tPos) != null)
+            {
+                enemyScript.SetTargetPosition(tPos);
+            }
         }
         /*Debug.Log((Camera.main.ScreenToWorldPoint(Input.mousePosition)));
         bool live = !true;

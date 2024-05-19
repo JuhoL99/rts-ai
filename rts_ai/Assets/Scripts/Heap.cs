@@ -3,15 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// generic heap class
 public class Heap<T> where T : IHeapItem<T>
 {
     T[] items;
     int currentItemCount;
 
+    // initialize heap with grid size
     public Heap(int maxHeapSize)
     {
         items = new T[maxHeapSize];
     }
+    // sets items heapindex, adds it to the heap and sorts it
     public void AddToHeap(T item)
     {
         item.HeapIndex = currentItemCount;
@@ -19,9 +22,11 @@ public class Heap<T> where T : IHeapItem<T>
         SortUp(item);
         currentItemCount++;
     }
+    // sort an item to the correct location on the heap
     private void SortUp(T item)
     {
         int parentIndex = (item.HeapIndex-1)/ 2;
+        // get items parent and swaps it if parent is larger
         while(true)
         {
             T parentItem = items[parentIndex];
@@ -36,6 +41,7 @@ public class Heap<T> where T : IHeapItem<T>
             parentIndex = (item.HeapIndex-1)/ 2;
         }
     }
+    // swaps 2 items on the heap
     private void SwapItems(T itemA, T itemB)
     {
         items[itemA.HeapIndex] = itemB;
@@ -44,6 +50,7 @@ public class Heap<T> where T : IHeapItem<T>
         itemA.HeapIndex = itemB.HeapIndex;
         itemB.HeapIndex = itemAIndexTemp;
     }
+    // remove and return root of the heap
     public T RemoveFirstHeapItem()
     {
         T firstItem = items[0];
@@ -83,7 +90,7 @@ public class Heap<T> where T : IHeapItem<T>
                         swapIndex = childIndexRight;
                     }
                 }
-                if (item.CompareTo(items[swapIndex])<0)
+                if (item.CompareTo(items[swapIndex]) < 0)
                 {
                     SwapItems(item, items[swapIndex]);
                 }
@@ -99,6 +106,7 @@ public class Heap<T> where T : IHeapItem<T>
         }
     }
 }
+// interface for items that can be added to the heap
 public interface IHeapItem<T> : IComparable<T>
 {
     int HeapIndex { get; set; }

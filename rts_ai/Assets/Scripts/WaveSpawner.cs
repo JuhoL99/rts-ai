@@ -25,7 +25,7 @@ public class WaveSpawner : MonoBehaviour
 
     void Start()
     {
-        targetPosition = new Vector3(19, 9, 0);
+        targetPosition = new Vector3(59, 29, 0);
         enemyList = new List<Enemy>();
     }
 
@@ -33,18 +33,30 @@ public class WaveSpawner : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            GameObject go = Instantiate(enemyPrefab, transform.position + new Vector3(0.5f, 4.5f, 0), Quaternion.identity);
+            GameObject go = Instantiate(enemyPrefab, transform.position + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
             Enemy enemy = go.GetComponent<Enemy>();
             enemy.SetTargetPosition(targetPosition);
             enemy.OnEnemyEvent += HandleEnemyEvent;
             enemyList.Add(enemy);
         }
-        if (enemyList.Count == 0)
+        if(Input.GetKeyDown(KeyCode.K))
         {
-            // Debug.Log("wave finished");
+            StartCoroutine(SpawnEnemies());
         }
     }
+    private IEnumerator SpawnEnemies()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            GameObject go = Instantiate(enemyPrefab, transform.position + new Vector3(0.5f, 0.5f, 0), Quaternion.identity);
+            Enemy enemy = go.GetComponent<Enemy>();
+            enemy.SetTargetPosition(targetPosition);
+            enemy.OnEnemyEvent += HandleEnemyEvent;
+            enemyList.Add(enemy);
 
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
     private void HandleEnemyEvent(object sender, EnemyEventArgs e)
     {
         Enemy enemy = sender as Enemy;

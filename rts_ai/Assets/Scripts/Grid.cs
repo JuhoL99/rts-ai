@@ -19,12 +19,7 @@ public class Grid<TGrid>
         public int x;
         public int y;
     }
-
-
-    private GameObject debugTile;
-    private GameObject[,] debugTiles;
-
-    // Grid constructor, takes in map size, size of map cell, grid origin location
+    // Grid constructor, takes in map size, size of map cell, grid origin location and a function which defines what grid element will be
     public Grid(int width, int height, int cellSize, Vector3 origin, Func<Grid<TGrid>,int,int,TGrid> createGridElement)
     {
         this.width = width;
@@ -35,7 +30,7 @@ public class Grid<TGrid>
 
         Debug.Log("created a grid: " + width + " " + height);
 
-        // Instantiate all grid elements
+        // Instantiate all grid elements as nodes from the node class
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -43,7 +38,6 @@ public class Grid<TGrid>
                 gridArray[x, y] = createGridElement(this, x, y);
             }
         }
-
         // Debug show grid coordinates
         bool debugCoords = false;
         if(debugCoords)
@@ -56,8 +50,8 @@ public class Grid<TGrid>
                 }
             }
         }
-
     }
+    // integer get for grid max size used by heap
     public int MaxSize
     {
         get
@@ -75,7 +69,7 @@ public class Grid<TGrid>
     {
         return new Vector2Int(Mathf.FloorToInt((worldPos-origin).x/cellSize), Mathf.FloorToInt((worldPos-origin).y/cellSize));
     }
-    // Method to set grid element at specified coordinate
+    // Method to set grid element at specified coordinate, also triggers an event
     public void SetGridElement(int x, int y, TGrid value)
     {
         if(x >= 0 && y >= 0 && x < width && y < height)
@@ -92,7 +86,6 @@ public class Grid<TGrid>
         int x = xy.x;
         int y = xy.y;
         SetGridElement(x, y, value);
-
     }
     // Method to trigger grid object changed event
     public void TriggerGridObjectChanged(int x, int y)
@@ -108,14 +101,12 @@ public class Grid<TGrid>
         }
         else { return default(TGrid); } // Return default value if coordinates are out of bounds
     }
-
     // Method to get grid element at specified world position
     public TGrid GetGridElement(Vector3 worldPos)
     {
         Vector2Int xy = GetXY((Vector3)worldPos);
         return GetGridElement(xy.x, xy.y);
     }
-
     // Get methods for grid properties
     public int GetWidth() { return width; }
     public int GetHeight() { return height; }

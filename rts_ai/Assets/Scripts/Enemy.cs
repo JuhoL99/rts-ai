@@ -18,10 +18,6 @@ public class Enemy : MonoBehaviour
 
     BuildManager buildManager;
     public event EventHandler<EnemyEventArgs> OnEnemyEvent;
-    //public event EventHandler OnReachedGoal;
-    //public event EventHandler OnEnemyDied;
-
-    //[Header("Health")]
     private int maxHealth = 10;
     private int currentHealth;
 
